@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dobby.mzdict.mapper.CommentReactionMapper">
+    <resultMap id="ReactionResultMap" type="com.dobby.mzdict.vo.CommentReactionVO">
+        <result property="userId" column="user_id" />
+        <result property="targetId" column="comment_id" />
+        <result property="reaction" column="reaction" />
+        <result property="reactionTime" column="reacted_at" />
+    </resultMap>
+
+    <select id="getReactions" resultMap="ReactionResultMap" >
+        select *
+        from comment_reaction;
+    </select>
+
+    <select id="getReactionByCommentId" resultMap="ReactionResultMap" >
+        select *
+        from comment_reaction
+        where comment_id = #{commentId}
+    </select>
+
+    <select id="getReactionById" resultMap="ReactionResultMap">
+        select *
+        from comment_reaction
+        where comment_id = #{commentId} and user_id = #{userId}
+    </select>
+
+    <insert id="addReaction">
+        insert into comment_reaction(comment_id, user_id, reaction, reacted_at)
+        values (#{targetId}, #{userId}, #{reaction}, #{reactionTime});
+    </insert>
+
+    <update id="updateReaction">
+        update comment_reaction
+        set
+            reaction = #{reaction},
+            reacted_at = #{reactionTime}
+        where comment_id = #{targetId} and user_id = #{userId};
+    </update>
+
+    <delete id="deleteReaction">
+        delete from comment_reaction
+        where comment_id = #{commentId} and user_id = #{userId};
+    </delete>
+
+</mapper>

@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dobby.mzdict.mapper.QuizMapper">
+    <resultMap id="QuizResultMap" type="com.dobby.mzdict.vo.QuizVO">
+        <id property="id" column="id" />
+        <result property="quizQuestion" column="quiz_question" />
+        <result property="quizAnswer" column="quiz_answer" />
+        <result property="createTime" column="created_at" />
+    </resultMap>
+
+    <resultMap id="UserQuizMap" type="com.dobby.mzdict.vo.UserQuizVO">
+        <result property="userId" column="user_id" />
+        <result property="quizId" column="quiz_id" />
+        <result property="isQuiz" column="is_quiz" />
+    </resultMap>
+
+    <insert id="addQuiz">
+        insert into quiz(quiz_question, quiz_answer, use_status, created_at)
+        values(#{quizQuestion}, #{quizAnswer}, #{useStatus}, #{createTime})
+    </insert>
+
+    <update id="updateQuiz">
+        update quiz
+        set
+            quiz_question = #{quizQuestion},
+            quiz_answer = #{quizAnswer},
+            use_status = #{useStatus},
+            created_at = #{createTime}
+        where id = #{id};
+    </update>
+
+    <update id="deleteQuiz">
+        update quiz
+        set
+            use_status = true
+        where id = #{id};
+    </update>
+
+    <select id="getQuizs" resultMap="QuizResultMap">
+        select *
+        from quiz
+        where use_status = false;
+    </select>
+
+    <select id="getTodayQuiz" resultMap="QuizResultMap">
+        select *
+        from quiz
+        where DATE(created_at) = CURDATE() and use_status = false;
+    </select>
+
+    <select id="getQuizById" resultMap="QuizResultMap">
+        select *
+        from quiz
+        where id = #{id} and use_status = false;
+    </select>
+
+    <insert id="resolveQuiz">
+        insert into user_quiz(user_id, quiz_id, isquiz)
+        values (#{userId}, #{quizId}, #{isQuiz});
+    </insert>
+
+    <select id="isUserQuiz" resultMap="UserQuizMap">
+        select *
+        from user_quiz
+        where user_id = #{userId} and quiz_id = #{quizId};
+    </select>
+</mapper>

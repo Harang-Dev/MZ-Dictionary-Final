@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dobby.mzdict.mapper.UserMapper">
+    <resultMap id="authMap" type="com.dobby.mzdict.vo.RoleVO">
+        <result property="id" column="id" />
+        <result property="role" column="rolename" />
+    </resultMap>
+
+    <resultMap id="UserResultMap" type="com.dobby.mzdict.vo.UserVO">
+        <id property="id" column="id" />
+        <result property="userId" column="user_id" />
+        <result property="userEmail" column="user_email" />
+        <result property="userNickName" column="nickname" />
+        <result property="passWord" column="password" />
+        <result property="createTime" column="created_at" />
+        <result property="updateTime" column="updated_at" />
+        <collection property="authList" resultMap="authMap" />
+    </resultMap>
+
+    <select id="getUser" resultMap="UserResultMap">
+        select u.*, a.user_id, r.rolename
+        from user u
+                 left outer join user_role a on u.id = a.user_id
+                 left outer join role r on r.id = a.role_id
+        where u.id = #{id};
+    </select>
+
+    <select id="getUsers" resultMap="UserResultMap">
+        select u.*, a.user_id, r.rolename
+        from user u
+                 left outer join user_role a on u.id = a.user_id
+                 left outer join role r on r.id = a.role_id
+    </select>
+
+    <select id="getUserByUserId" resultMap="UserResultMap">
+        select u.*, a.user_id, r.rolename
+        from user u
+                 left outer join user_role a on u.id = a.user_id
+                 left outer join role r on r.id = a.role_id
+        where u.user_id = #{userId};
+    </select>
+
+    <insert id="addUser" parameterType="com.dobby.mzdict.vo.UserVO" keyProperty="id">
+        insert into user (user_id, user_email, password, nickname, created_at, updated_at)
+        values (#{userId}, #{userEmail}, #{passWord}, #{userNickName}, #{createTime}, #{updateTime})
+    </insert>
+
+    <insert id="addRole">
+        insert into user_role(user_id, role_id)
+        values (#{id}, (select id
+                            from role
+                            where rolename=#{role})
+               )
+    </insert>
+</mapper>

@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dobby.mzdict.mapper.DiscussionMapper">
+    <resultMap id="DiscussionResultMap" type="com.dobby.mzdict.vo.DiscussionVO" >
+        <id property="id" column="id" />
+        <result property="topic" column="topic" />
+        <result property="option1" column="option1" />
+        <result property="option2" column="option2" />
+        <result property="useStatus" column="use_status" />
+        <result property="createTime" column="created_at" />
+    </resultMap>
+
+    <insert id="addDiscussion" >
+        insert into discussion(topic, option1, option2, use_status, created_at)
+        values (#{topic}, #{option1}, #{option2}, #{useStatus}, #{createTime});
+    </insert>
+
+    <update id="updateDiscussion">
+        update discussion
+        set
+            topic = #{topic},
+            option1 = #{option1},
+            option2 = #{option2},
+            use_status = #{useStatus},
+            created_at = #{createTime}
+        where id = #{id};
+    </update>
+
+    <delete id="deleteDiscussion">
+        update discussion
+        set
+            use_status = true
+        where id = #{id};
+    </delete>
+
+    <select id="getDiscussions" resultMap="DiscussionResultMap">
+        select *
+        from discussion
+        where use_status = false;
+    </select>
+
+    <select id="getTodayDiscussion" resultMap="DiscussionResultMap">
+        select *
+        from discussion
+        where DATE(created_at) = CURDATE() and use_status = false;
+    </select>
+
+    <select id="getDiscussionById" resultMap="DiscussionResultMap">
+        select *
+        from discussion
+        where id = #{id} and use_status = false;
+    </select>
+
+    <insert id="selectOption">
+        insert into user_discussion(discussion_id, user_id, stat)
+        values (#{discussionId}, #{userId}, #{stat});
+    </insert>
+
+    <select id="getTrueOptions">
+        select *
+        from user_discussion
+        where stat = true;
+    </select>
+
+    <select id="getFalseOptions">
+        select *
+        from user_discussion
+        where stat = false;
+    </select>
+
+</mapper>

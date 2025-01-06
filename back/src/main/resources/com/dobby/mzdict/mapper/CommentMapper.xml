@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dobby.mzdict.mapper.CommentMapper">
+    <resultMap id="CommentResultMap" type="com.dobby.mzdict.vo.CommentVO">
+        <id property="id" column="id" />
+        <result property="commentText" column="comment_text" />
+        <result property="createTime" column="created_at" />
+        <result property="updateTime" column="updated_at" />
+        <result property="wordId" column="word_id" />
+        <result property="userId" column="user_id" />
+    </resultMap>
+
+    <select id="getCommentById" resultMap="CommentResultMap">
+        select *
+        from comment
+        where id = #{id};
+    </select>
+
+    <insert id="addComment" useGeneratedKeys="true" keyProperty="id">
+        insert into comment(comment_text, created_at, updated_at, word_id, user_id)
+        values (#{commentText}, #{createTime}, #{updateTime}, #{wordId}, #{userId});
+    </insert>
+
+    <update id="updateComment">
+        update comment
+        set
+            comment_text = #{commentText},
+            updated_at = #{updateTime}
+        where id = #{id};
+    </update>
+
+    <select id="getCommentByWordId" resultMap="CommentResultMap">
+        select *
+        from comment
+        where word_id = #{wordId}
+    </select>
+
+    <delete id="deleteComment">
+        delete from comment
+        where id = #{id}
+    </delete>
+
+    <select id="getComments" resultMap="CommentResultMap">
+        select *
+        from comment
+    </select>
+
+<!--    <select id="getCommentView">-->
+<!--        select *-->
+<!--        from-->
+<!--    </select>-->
+
+</mapper>
