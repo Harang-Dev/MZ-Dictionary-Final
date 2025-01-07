@@ -1,18 +1,20 @@
 import React from "react";
 import styled from "styled-components";
-import { Form, Input, Button, Typography } from "antd";
-
-const { Link } = Typography;
+import { useNavigate } from "react-router-dom";
+import { Form, Input, Button, message } from "antd";
+import { Link } from "react-router-dom";
+import { useMutation } from "@tanstack/react-query";
+import { signIn } from "../../API/api";
 
 const FormContainer = styled.div`
   width: 726px;
   height: 726px;
-  background-color: #858585;
+  background-color: #000;
   padding: 30px 150px;
   border-radius: 50px;
   display: flex;
   flex-direction: column;
-  justify-content: flex-start;
+  justify-content: center;
   align-items: center;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 `;
@@ -40,12 +42,11 @@ const Line = styled.hr`
   width: 80%;
   border: none;
   border-top: 2px solid #ccc;
-  margin: 20px 0;
 `;
 
 const StyledForm = styled(Form)`
   width: 100%;
-  margin-top: 20%;
+  margin-top: 10%;
 `;
 
 const StyledInput = styled(Input)`
@@ -85,19 +86,53 @@ const LinkWrapper = styled.div`
   display: flex;
   justify-content: space-between;
   margin-top: 10px;
+  width: 100%;
 `;
 
-const StyledLink = styled(Link)`
-  color: #000 !important;
+const LeftLinks = styled.div`
+  display: flex;
+  align-items: center;
+`;
 
+const RightLinks = styled.div`
+  display: flex;
+  align-items: center;
+`;
+
+const Divider = styled.span`
+  margin: 0 10px;
+  color: #fff;
+`;
+
+const StyledRouterLink = styled(Link)`
+  color: #fff !important;
   &:hover {
     text-decoration: underline !important;
   }
 `;
 
 function LoginBox() {
+  const navigate = useNavigate();
+
+
+  const { mutate, isLoading } = useMutation({
+    mutationFn: signIn,
+    onSuccess: (data) => {
+      const { msg, data:token } = data;
+      localStorage.setItem("token", token);
+      message.success('환영합니다.');
+      navigate("/");
+    },
+    onError: (error) => {
+      const errorMessage = error.response?.data?.message || "로그인에 실패했습니다.";
+      message.error(errorMessage);
+    },
+  });
+
+
+
   const handleSubmit = (values) => {
-    console.log("Login Form Submitted:", values);
+    mutate(values);
   };
 
   return (
@@ -113,7 +148,7 @@ function LoginBox() {
         onFinish={handleSubmit}
       >
         <Form.Item
-          name="id"
+          name="userId"
           rules={[{ required: true, message: "아이디를 입력하세요." }]}
         >
           <StyledInput placeholder="ID" size="large" />
@@ -133,8 +168,14 @@ function LoginBox() {
         </Form.Item>
 
         <LinkWrapper>
-          <StyledLink href="#">아이디 찾기</StyledLink>
-          <StyledLink href="#">비밀번호 찾기</StyledLink>
+          <LeftLinks>
+            <StyledRouterLink to="/register">회원가입</StyledRouterLink>
+          </LeftLinks>
+          <RightLinks>
+            <StyledRouterLink to="#">아이디 찾기</StyledRouterLink>
+            <Divider>|</Divider>
+            <StyledRouterLink to="#">비밀번호 찾기</StyledRouterLink>
+          </RightLinks>
         </LinkWrapper>
       </StyledForm>
     </FormContainer>

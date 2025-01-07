@@ -1,7 +1,7 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import styled from "styled-components";
 
-// Styled-components로 스타일 정의
 const HeaderWrapper = styled.header`
   display: flex;
   align-items: center;
@@ -26,8 +26,8 @@ const NavList = styled.ul`
 `;
 
 const NavItem = styled.li`
-  display: flex; /* 플렉스 박스 사용 */
-  align-items: center; /* 세로 가운데 정렬 */
+  display: flex;
+  align-items: center;
   margin: 0 16px;
   color: #fff;
   cursor: pointer;
@@ -38,29 +38,29 @@ const NavItem = styled.li`
     color: #4096ff;
   }
 
-  /* 가상 요소로 구분선 추가 */
   &::after {
     content: "|";
     color: #fff;
     margin-left: 40px;
   }
 
-  /* 마지막 항목은 구분선 제거 */
   &:last-child::after {
     content: "";
   }
 `;
 
-// 컴포넌트 정의
+
 const Header = () => {
   return (
     <HeaderWrapper>
-      <Logo>MyLogo</Logo>
-
-      {/* 메뉴 */}
+      <Link to="/">
+        <Logo>MyLogo</Logo>
+      </Link>
       <NavList>
         <NavItem>WordBook</NavItem>
-        <NavItem>Login</NavItem>
+        <Link to="/login">
+          <NavItem>Login</NavItem>
+        </Link>
       </NavList>
     </HeaderWrapper>
   );
