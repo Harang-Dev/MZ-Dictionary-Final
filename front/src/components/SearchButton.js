@@ -1,6 +1,10 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 import { SearchOutlined } from "@ant-design/icons";
+import { useMutation } from "@tanstack/react-query";
+import { searchWord } from "../API/api";
+import { message } from "antd";
+import { useNavigate } from "react-router-dom";
 
 const ButtonWrapper = styled.div`
   display: flex;
@@ -64,8 +68,47 @@ const SearchIconWrapper = styled.div`
 `;
 
 function SearchButtonComponent() {
-  const [isClicked, setIsClicked] = useState(false);
+  
+  const navigate = useNavigate();
+
   const [searchText, setSearchText] = useState("");
+  const [isClicked, setIsClicked] = useState(false);
+  const token = localStorage.getItem("token");
+
+  const { mutate, isLoading } = useMutation({
+    mutationFn: (keyWord) => searchWord(keyWord, token), // 수정된 함수명
+    onSuccess: (data) => {
+      console.log("검색 결과:", data);
+      navigate('/detail', { state: data });
+
+    },
+    onError: (error) => {
+      const errorMessage = error.message || "검색 실패! 예상치 못한 에러가 발생했습니다.";
+      message.error(errorMessage);
+    },
+  });
+
+  const handleSearchRequest = () => {
+    if (!token) {
+      message.warning("로그인이 필요합니다!");
+      return;
+    }
+
+    if (!searchText.trim()) {
+      message.warning("검색어를 입력하세요!");
+      return;
+    }
+
+    console.log("토큰값 :", token);
+
+    mutate(searchText.trim()); // 검색 요청 수행
+  };
+
+  const handleKeyPress = (e) => {
+    if (e.key === "Enter") {
+      handleSearchRequest();
+    }
+  };
 
   const handleClick = () => {
     setIsClicked(true);
@@ -73,10 +116,6 @@ function SearchButtonComponent() {
 
   const handleChange = (e) => {
     setSearchText(e.target.value);
-  };
-
-  const handleSearch = () => {
-    alert(`검색: ${searchText}`);
   };
 
   return (
@@ -95,9 +134,10 @@ function SearchButtonComponent() {
               value={searchText}
               onChange={handleChange}
               placeholder="검색어를 입력하세요"
+              onKeyPress={handleKeyPress}
               autoFocus
             />
-            <SearchIconWrapper onClick={handleSearch}>
+            <SearchIconWrapper onClick={handleSearchRequest}>
               <SearchOutlined style={{ fontSize: "20px" }} />
             </SearchIconWrapper>
           </>
