@@ -107,6 +107,8 @@
             (SELECT COUNT(*) FROM likes l WHERE l.word_id = w.id) AS likes_count,
             case when l.user_id is not null then true else false end as liked,
 
+            (SELECT COUNT(*) FROM comment c WHERE c.word_id = w.id) as comment_count,
+
             c.id AS comment_id,
             c.comment_text as comment_text,
             u.nickname AS comment_user_nickname,
@@ -147,6 +149,8 @@
 
             (SELECT COUNT(*) FROM likes l WHERE l.word_id = w.id) AS likes_count,
             case when l.user_id is not null then true else false end as liked,
+
+            (SELECT COUNT(*) FROM comment c WHERE c.word_id = w.id) as comment_count,
 
             c.id AS comment_id,
             c.comment_text as comment_text,

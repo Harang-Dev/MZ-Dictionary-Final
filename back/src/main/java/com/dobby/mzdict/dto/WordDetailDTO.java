@@ -24,9 +24,6 @@ public class WordDetailDTO {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime wordUpdatedAt;
 
-    // 댓글 데이터
-    private List<CommentDTO> comments = new ArrayList<>();
-
     // 좋아요 수
     private int likesCount;
     private boolean liked;
@@ -38,6 +35,9 @@ public class WordDetailDTO {
     // 전체 댓글 수
     private int commentCount;
 
+    // 댓글 데이터
+    private List<CommentDTO> comments = new ArrayList<>();
+
     @Getter
     @Setter
     public static class CommentDTO {
@@ -48,12 +48,12 @@ public class WordDetailDTO {
         private LocalDateTime commentUpdatedAt;
         private String commentUserNickname;
 
-        // 댓글에 달린 답글 데이터
-        private List<ReplyDTO> replies = new ArrayList<>();
-
         // 댓글 리액션 수
         private int commentLikeCount;
         private int commentDislikeCount;
+
+        // 댓글에 달린 답글 데이터
+        private List<ReplyDTO> replies = new ArrayList<>();
     }
 
     @Getter
