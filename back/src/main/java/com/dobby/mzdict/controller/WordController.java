@@ -72,7 +72,6 @@ public class WordController implements WordControllerDocs{
         }
     }
 
-
     @PostMapping("/add")
     public ResponseEntity<WordAddDTO> insertWord(String token, WordAddDTO wordAddDTO) {
         int userId = userService.getUserByUserId(jwtTokenProvider.getUserPK(token)).getId();

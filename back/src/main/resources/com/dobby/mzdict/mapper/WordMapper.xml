@@ -10,6 +10,7 @@
         <result property="createTime" column="created_at" />
         <result property="updateTime" column="updated_at" />
         <result property="userId" column="user_id" />
+        <result property="acceptStatus" column="accept_status" />
         <result property="likeCount" column="like_count"/>
         <result property="liked" column="liked" />
         <result property="scrapCount" column="scrap_count" />
@@ -50,10 +51,11 @@
 
     <select id="getWords" resultMap="WordResultMap">
         select
-            w.id as word_id,
+            w.id as id,
             w.wordtitle,
             w.meaning,
             w.using_example,
+            w.accept_status,
             w.user_id as word_user_id,
             w.created_at as word_created_at,
 
@@ -72,10 +74,11 @@
 
     <select id="getWordsByNonMember" resultMap="WordResultMap">
         select
-            w.id as word_id,
+            w.id as id,
             w.wordtitle,
             w.meaning,
             w.using_example,
+            w.accept_status,
             w.user_id as word_user_id,
             w.created_at as word_created_at,
 
@@ -200,7 +203,7 @@
 
     <select id="findWord" resultMap="WordResultMap">
         select
-            w.id as word_id,
+            w.id as id,
             w.wordtitle,
             w.meaning,
             w.using_example,
@@ -217,13 +220,13 @@
                 left join
             likes l on w.id = l.word_id and l.user_id = #{userId}
                 left JOIN
-            scrap s on w.id = s.word_id and s.user_id = #{uesrId}
+            scrap s on w.id = s.word_id and s.user_id = #{userId}
         where wordtitle like concat('%', #{keyWord}, '%') and accept_status > 0;
     </select>
 
     <select id="findWordByNonMember" resultMap="WordResultMap">
         select
-            w.id as word_id,
+            w.id as id,
             w.wordtitle,
             w.meaning,
             w.using_example,
