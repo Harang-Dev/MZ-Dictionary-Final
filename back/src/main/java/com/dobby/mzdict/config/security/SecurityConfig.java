@@ -25,13 +25,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @RequiredArgsConstructor
 @Configuration
 public class SecurityConfig {
-
-    @Value("${swagger.username}")
-    private String swaggerUsername;
-
-    @Value("${swagger.password}")
-    private String swaggerPassword;
-
+    
     private final JwtTokenProvider jwtTokenProvider;
 
     @Bean
@@ -43,15 +37,6 @@ public class SecurityConfig {
     public AuthenticationManager authenticationManagerBean(AuthenticationConfiguration authenticationConfiguration) throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
     }
-
-//    @Bean
-//    public InMemoryUserDetailsManager userDetailsManager() {
-//        UserDetails user = User.withUsername(swaggerUsername)
-//                .password(passwordEncoder().encode(swaggerPassword))
-//                .roles("SWAGGER")
-//                .build();
-//        return new InMemoryUserDetailsManager(user);
-//    }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {

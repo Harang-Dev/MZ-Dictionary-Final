@@ -1,6 +1,7 @@
 package com.dobby.mzdict.service;
 
 import com.dobby.mzdict.dto.WordAddDTO;
+import com.dobby.mzdict.dto.WordDetailDTO;
 import com.dobby.mzdict.dto.WordUpdateDTO;
 import com.dobby.mzdict.mapper.WordMapper;
 import com.dobby.mzdict.vo.WordVO;
@@ -24,11 +25,11 @@ public class WordService {
 
     public List<WordVO> getWordsByNonMember() { return mapper.getWordsByNonMember(); }
 
-    public WordVO getWord(int id, int userId) {
+    public WordDetailDTO getWord(int id, int userId) {
         return mapper.getWord(id, userId);
     }
 
-    public WordVO getWordByNonMember(int id) { return mapper.getWordByNonMember(id); }
+    public WordDetailDTO getWordByNonMember(int id) { return mapper.getWordByNonMember(id); }
 
     @Transactional
     public boolean updateWord(WordUpdateDTO wordUpdateDTO){

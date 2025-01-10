@@ -2,6 +2,7 @@ package com.dobby.mzdict.controller;
 
 import com.dobby.mzdict.config.security.JwtTokenProvider;
 import com.dobby.mzdict.dto.WordAddDTO;
+import com.dobby.mzdict.dto.WordDetailDTO;
 import com.dobby.mzdict.dto.WordUpdateDTO;
 import com.dobby.mzdict.service.UserService;
 import com.dobby.mzdict.service.WordService;
@@ -51,9 +52,9 @@ public class WordController implements WordControllerDocs{
     };
 
     @GetMapping("/info")
-    public ResponseEntity<WordVO> getWord(String token, int wordId) {
+    public ResponseEntity<WordDetailDTO> getWord(String token, int wordId) {
         int userId = userService.getUserByUserId(jwtTokenProvider.getUserPK(token)).getId();
-        WordVO wordInfo = service.getWord(wordId, userId);
+        WordDetailDTO wordInfo = service.getWord(wordId, userId);
         if (wordInfo != null) {
             return ResponseEntity.ok(wordInfo);
         } else {
@@ -62,8 +63,8 @@ public class WordController implements WordControllerDocs{
     }
 
     @GetMapping("/info/non-member")
-    public ResponseEntity<WordVO> getWordByNonMember(int wordId) {
-        WordVO wordInfo = service.getWordByNonMember(wordId);
+    public ResponseEntity<WordDetailDTO> getWordByNonMember(int wordId) {
+        WordDetailDTO wordInfo = service.getWordByNonMember(wordId);
         if (wordInfo != null) {
             return ResponseEntity.ok(wordInfo);
         } else {

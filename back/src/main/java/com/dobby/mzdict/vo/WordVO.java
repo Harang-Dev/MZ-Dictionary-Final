@@ -1,5 +1,6 @@
 package com.dobby.mzdict.vo;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.core.ErrorReportConfiguration;
 import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -19,14 +20,17 @@ public class WordVO {
     private String usingExample;
     private int acceptStatus;
 
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createTime;
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime updateTime;
 
     private int userId;
 
+    private int scrapCount;
     private boolean scrapped;
+
+    private int likeCount;
     private boolean liked;
 
 }

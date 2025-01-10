@@ -1,5 +1,6 @@
 package com.dobby.mzdict.mapper;
 
+import com.dobby.mzdict.dto.WordDetailDTO;
 import com.dobby.mzdict.vo.WordVO;
 import org.apache.ibatis.annotations.Mapper;
 
@@ -11,9 +12,9 @@ public interface WordMapper {
 
     public List<WordVO> getWordsByNonMember();
 
-    public WordVO getWord(int id, int userId);
+    public WordDetailDTO getWord(int id, int userId);
 
-    public WordVO getWordByNonMember(int id);
+    public WordDetailDTO getWordByNonMember(int id);
 
     public int updateWord(WordVO wordInfo);
 

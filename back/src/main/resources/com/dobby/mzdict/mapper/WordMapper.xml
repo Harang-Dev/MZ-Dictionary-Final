@@ -10,8 +10,42 @@
         <result property="createTime" column="created_at" />
         <result property="updateTime" column="updated_at" />
         <result property="userId" column="user_id" />
+        <result property="likeCount" column="like_count"/>
         <result property="liked" column="liked" />
+        <result property="scrapCount" column="scrap_count" />
         <result property="scrapped" column="scrapped" />
+    </resultMap>
+
+    <resultMap id="WordDetailMap" type="com.dobby.mzdict.dto.WordDetailDTO">
+        <id property="id" column="word_id"/>
+        <result property="wordTitle" column="wordtitle" />
+        <result property="meaning" column="meaning" />
+        <result property="usingExample" column="using_example" />
+        <result property="wordCreatedAt" column="created_at" />
+        <result property="wordUpdatedAt" column="updated_at" />
+        <result property="scrapCount" column="scrap_count" />
+        <result property="scrapped" column="scrapped" />
+        <result property="likesCount" column="likes_count" />
+        <result property="liked" column="liked" />
+        <result property="commentCount" column="comment_count" />
+
+        <collection property="comments" ofType="com.dobby.mzdict.dto.WordDetailDTO$CommentDTO" >
+            <id property="commentId" column="comment_id" />
+            <result property="commentText" column="comment_text" />
+            <result property="commentUserNickname" column="comment_user_nickname" />
+            <result property="commentUpdatedAt" column="comment_updated_at" />
+            <result property="commentLikeCount" column="comment_like_count" />
+            <result property="commentDislikeCount" column="comment_dislike_count" />
+
+            <collection property="replies" ofType="com.dobby.mzdict.dto.WordDetailDTO$ReplyDTO" >
+                    <id property="replyId" column="reply_id" />
+                    <result property="replyText" column="reply_text" />
+                    <result property="replyUserNickname" column="reply_user_nickname" />
+                    <result property="replyUpdatedAt" column="reply_updated_at" />
+                    <result property="replyLikeCount" column="reply_like_count" />
+                    <result property="replyDislikeCount" column="reply_dislike_count" />
+            </collection>
+        </collection>
     </resultMap>
 
     <select id="getWords" resultMap="WordResultMap">
@@ -22,7 +56,11 @@
             w.using_example,
             w.user_id as word_user_id,
             w.created_at as word_created_at,
-            case when l.user_id is not null then true else false end as liked,
+
+            (select count(*) from likes s where s.word_id = w.id) as reaction_count,
+            case when l.user_id is not null then true else false end as reacted,
+
+            (select count(*) from scrap s where s.word_id = w.id) as scrap_count,
             case when s.user_id is not null then true else false end as scrapped
         from
             word w
@@ -40,7 +78,11 @@
             w.using_example,
             w.user_id as word_user_id,
             w.created_at as word_created_at,
+
+            (select count(*) from likes s where s.word_id = w.id) as like_count,
             case when l.user_id is not null then true else false end as liked,
+
+            (select count(*) from scrap s where s.word_id = w.id) as scrap_count,
             case when s.user_id is not null then true else false end as scrapped
         from
             word w
@@ -50,45 +92,87 @@
             scrap s on w.id = s.word_id and s.user_id = null;
     </select>
 
-    <select id="getWord" resultMap="WordResultMap">
-        select
-            w.id as word_id,
+    <select id="getWord" resultMap="WordDetailMap">
+        SELECT
+            w.id AS word_id,
             w.wordtitle,
             w.meaning,
             w.using_example,
-            w.user_id as word_user_id,
-            w.created_at as word_created_at,
+            w.created_at AS created_at,
+            w.updated_at AS updated_at,
+
+            (SELECT COUNT(*) FROM scrap s WHERE s.word_id = w.id) AS scrap_count,
+            case when s.user_id is not null then true else false end as scrapped,
+
+            (SELECT COUNT(*) FROM likes l WHERE l.word_id = w.id) AS likes_count,
             case when l.user_id is not null then true else false end as liked,
-            case when s.user_id is not null then true else false end as scrapped
-        from
+
+            c.id AS comment_id,
+            c.comment_text as comment_text,
+            u.nickname AS comment_user_nickname,
+            c.updated_at AS comment_updated_at,
+            (SELECT COUNT(*) FROM comment_reaction WHERE comment_reaction.comment_id = c.id and comment_reaction.reaction = true) as comment_like_count,
+            (SELECT COUNT(*) FROM comment_reaction WHERE comment_reaction.comment_id = c.id and comment_reaction.reaction = false) as comment_dislike_count,
+
+            cr.id AS reply_id,
+            cr.reply_text,
+            ru.nickname AS reply_user_nickname,
+            cr.updated_at AS reply_updated_at,
+            (SELECT COUNT(*) FROM reply_reaction WHERE reply_reaction.reply_id = cr.id and reply_reaction.reaction = true) as reply_like_count,
+            (SELECT COUNT(*) FROM reply_reaction WHERE reply_reaction.reply_id = cr.id and reply_reaction.reaction = false) as reply_dislike_count
+
+        FROM
             word w
-                left join
-            likes l on w.id = l.word_id and l.user_id = #{userId}
-                left JOIN
-            scrap s on w.id = s.word_id and s.user_id = #{userId}
-        where id = #{id};
+                LEFT JOIN comment c ON w.id = c.word_id
+                LEFT JOIN user u ON c.user_id = u.id
+                LEFT JOIN comment_reply cr ON c.id = cr.comment_id
+                LEFT JOIN user ru ON cr.user_id = ru.user_id
+                LEFT JOIN likes l on w.id = l.word_id and l.user_id = #{userId}
+                LEFT JOIN scrap s on w.id = s.word_id and s.user_id = #{userId}
+        WHERE
+            w.id = #{id}
     </select>
 
-    <select id="getWordByNonMember" resultMap="WordResultMap">
-        select
-            w.id as word_id,
+    <select id="getWordByNonMember" resultMap="WordDetailMap">
+        SELECT
+            w.id AS word_id,
             w.wordtitle,
             w.meaning,
             w.using_example,
-            w.user_id as word_user_id,
-            w.created_at as word_created_at,
+            w.created_at AS created_at,
+            w.updated_at AS updated_at,
+
+            (SELECT COUNT(*) FROM scrap s WHERE s.word_id = w.id) AS scrap_count,
+            case when s.user_id is not null then true else false end as scrapped,
+
+            (SELECT COUNT(*) FROM likes l WHERE l.word_id = w.id) AS likes_count,
             case when l.user_id is not null then true else false end as liked,
-            case when s.user_id is not null then true else false end as scrapped
-        from
+
+            c.id AS comment_id,
+            c.comment_text as comment_text,
+            u.nickname AS comment_user_nickname,
+            c.updated_at AS comment_updated_at,
+            (SELECT COUNT(*) FROM comment_reaction WHERE comment_reaction.comment_id = c.id and comment_reaction.reaction = true) as comment_like_count,
+            (SELECT COUNT(*) FROM comment_reaction WHERE comment_reaction.comment_id = c.id and comment_reaction.reaction = false) as comment_dislike_count,
+
+            cr.id AS reply_id,
+            cr.reply_text,
+            ru.nickname AS reply_user_nickname,
+            cr.updated_at AS reply_updated_at,
+            (SELECT COUNT(*) FROM reply_reaction WHERE reply_reaction.reply_id = cr.id and reply_reaction.reaction = true) as reply_like_count,
+            (SELECT COUNT(*) FROM reply_reaction WHERE reply_reaction.reply_id = cr.id and reply_reaction.reaction = false) as reply_dislike_count
+
+            FROM
             word w
-                left join
-            likes l on w.id = l.word_id and l.user_id = null
-                left JOIN
-            scrap s on w.id = s.word_id and s.user_id = null
-        where id = #{id};
+                LEFT JOIN comment c ON w.id = c.word_id
+                LEFT JOIN user u ON c.user_id = u.id
+                LEFT JOIN comment_reply cr ON c.id = cr.comment_id
+                LEFT JOIN user ru ON cr.user_id = ru.user_id
+                LEFT JOIN likes l on w.id = l.word_id and l.user_id = null
+                LEFT JOIN scrap s on w.id = s.word_id and s.user_id = null
+        WHERE
+            w.id = #{id}
     </select>
-
-
 
     <update id="updateWord">
         update word
@@ -118,7 +202,11 @@
             w.using_example,
             w.user_id as word_user_id,
             w.created_at as word_created_at,
+
+            (select count(*) from likes s where s.word_id = w.id) as like_count,
             case when l.user_id is not null then true else false end as liked,
+
+            (select count(*) from scrap s where s.word_id = w.id) as scrap_count,
             case when s.user_id is not null then true else false end as scrapped
         from
             word w
@@ -137,7 +225,11 @@
             w.using_example,
             w.user_id as word_user_id,
             w.created_at as word_created_at,
+
+            (select count(*) from likes s where s.word_id = w.id) as like_count,
             case when l.user_id is not null then true else false end as liked,
+
+            (select count(*) from scrap s where s.word_id = w.id) as scrap_count,
             case when s.user_id is not null then true else false end as scrapped
         from
             word w
