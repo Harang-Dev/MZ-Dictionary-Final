@@ -1,10 +1,10 @@
 package com.dobby.mzdict.service;
 
+import com.dobby.mzdict.dto.ReactionDTO;
 import com.dobby.mzdict.mapper.CommentReactionMapper;
 import com.dobby.mzdict.vo.CommentReactionVO;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -27,15 +27,21 @@ public class CommentReactionService {
         return commentReactionMapper.getReactionById(commentId,userId);
     }
 
-    public boolean addReaction(CommentReactionVO commentReactionVO){
-        LocalDateTime now = LocalDateTime.now();
-        commentReactionVO.setReactionTime(now);
+    public boolean addReaction(ReactionDTO reactionDTO, int userId){
+        CommentReactionVO reactionVO = CommentReactionVO.builder()
+                .userId(userId)
+                .targetId(reactionDTO.getTargetId())
+                .reaction(reactionDTO.isReaction())
+                .reactionTime(LocalDateTime.now())
+                .build();
 
-        return commentReactionMapper.addReaction(commentReactionVO);
+        return commentReactionMapper.addReaction(reactionVO);
     }
-    public boolean updateReaction(CommentReactionVO commentReactionVO) {
-        LocalDateTime now = LocalDateTime.now();
-        commentReactionVO.setReactionTime(now);
+    public boolean updateReaction(ReactionDTO reactionDTO, int userId) {
+        CommentReactionVO commentReactionVO = commentReactionMapper.getReactionById(reactionDTO.getTargetId(),userId);
+
+        commentReactionVO.setReaction(reactionDTO.isReaction());
+        commentReactionVO.setReactionTime(LocalDateTime.now());
 
         return commentReactionMapper.updateReaction(commentReactionVO);
     }

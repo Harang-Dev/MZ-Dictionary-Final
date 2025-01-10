@@ -1,14 +1,15 @@
 package com.dobby.mzdict.vo;
 
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
 @Getter
 @Setter
 @Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class CommentVO {
     private int id;
     private String commentText;

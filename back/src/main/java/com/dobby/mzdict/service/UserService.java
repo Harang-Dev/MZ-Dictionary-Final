@@ -1,5 +1,6 @@
 package com.dobby.mzdict.service;
 
+import com.dobby.mzdict.dto.UserRegisterDTO;
 import com.dobby.mzdict.mapper.UserMapper;
 import com.dobby.mzdict.vo.RoleVO;
 import com.dobby.mzdict.vo.LoginVO;
@@ -39,22 +40,23 @@ public class UserService {
     }
 
     @Transactional
-    public UserVO register(UserVO userInfo) {
+    public UserVO register(UserRegisterDTO userInfo) {
         UserVO vo = mapper.getUserByUserId(userInfo.getUserId());
         if (vo != null) {
             throw new RuntimeException("이미 존재하는 아이디입니다: " + userInfo.getUserId());
         }
 
-        LocalDateTime now = LocalDateTime.now();
+        UserVO userVo = UserVO.builder()
+                .userId(userInfo.getUserId())
+                .userEmail(userInfo.getUserEmail())
+                .passWord(pwdEncoder.encode(userInfo.getPassword()))
+                .userNickName(userInfo.getNickname())
+                .createTime(LocalDateTime.now())
+                .updateTime(LocalDateTime.now())
+                .build();
 
-        userInfo.setCreateTime(now);
-        userInfo.setUpdateTime(now);
-
-        String encryptPassword = pwdEncoder.encode(userInfo.getPassWord());
-        userInfo.setPassWord(encryptPassword);
-
-        mapper.addUser(userInfo);
-        int userIndex = mapper.getUserByUserId(userInfo.getUserId()).getId();
+        mapper.addUser(userVo);
+        int userIndex = mapper.getUserByUserId(userVo.getUserId()).getId();
 
         RoleVO auth = new RoleVO(userIndex, "ROLE_USER");
         mapper.addRole(auth);

@@ -1,5 +1,9 @@
 package com.dobby.mzdict.controller;
 
+import com.dobby.mzdict.dto.CommentAddDTO;
+import com.dobby.mzdict.dto.CommentUpdateDTO;
+import com.dobby.mzdict.dto.ReplyAddDTO;
+import com.dobby.mzdict.dto.ReplyUpdateDTO;
 import com.dobby.mzdict.model.ListResult;
 import com.dobby.mzdict.model.SingleResult;
 import com.dobby.mzdict.service.CommentReplyService;
@@ -28,54 +32,52 @@ public class CommentController implements CommentControllerDocs{
     }
 
     @PostMapping("/add")
-    public SingleResult<CommentVO> addComment(@RequestHeader(value = "X-AUTH-TOKEN") String token, @RequestBody CommentVO commentVO){
+    public SingleResult<CommentAddDTO> addComment(String token, CommentAddDTO commentAddDTO){
         String userId = SecurityContextHolder.getContext().getAuthentication().getName();
         int id = userService.getUserByUserId(userId).getId();
 
-        commentVO.setUserId(id);
-        return responseService.getSingleResult(commentService.addComment(commentVO));
+        return responseService.getSingleResult(commentService.addComment(commentAddDTO, id));
     }
 
     @PutMapping("/update")
-    public SingleResult<CommentVO> updateComment(@RequestHeader(value = "X-AUTH-TOKEN") String token, @RequestBody CommentVO commentVO) {
-        return responseService.getSingleResult(commentService.updateComment(commentVO));
+    public SingleResult<CommentUpdateDTO> updateComment(String token, CommentUpdateDTO commentUpdateDTO) {
+        return responseService.getSingleResult(commentService.updateComment(commentUpdateDTO));
     }
 
     @GetMapping("/get")
-    public ListResult<CommentVO> getCommentByWordId(@RequestHeader(value = "X-AUTH-TOKEN") String token, @RequestParam int wordId){
+    public ListResult<CommentVO> getCommentByWordId(String token, int wordId){
         return responseService.getListResult(commentService.getCommentByWordId(wordId));
     }
 
     @GetMapping("/delete")
-    public SingleResult<Integer> deleteComment(@RequestHeader(value = "X-AUTH-TOKEN") String token, @RequestParam int commentId) {
+    public SingleResult<Integer> deleteComment(String token, int commentId) {
         return responseService.getSingleResult(commentService.deleteComment(commentId));
     }
 
     @GetMapping("/")
-    public ListResult<CommentVO> getComments(@RequestHeader(value = "X-AUTH-TOKEN") String token) {
+    public ListResult<CommentVO> getComments(String token) {
         return responseService.getListResult(commentService.getComments());
     }
 
     @Override
     @PostMapping("/reply/add")
-    public SingleResult<CommentReplyVO> addReply(String token, CommentReplyVO replyInfo) {
+    public SingleResult<ReplyAddDTO> addReply(String token, ReplyAddDTO replyInfo) {
         String userId = SecurityContextHolder.getContext().getAuthentication().getName();
         int id = userService.getUserByUserId(userId).getId();
 
-        replyInfo.setUserId(id);
-        return responseService.getSingleResult(commentReplyService.addReply(replyInfo));
+        return responseService.getSingleResult(commentReplyService.addReply(replyInfo, id));
     }
 
     @Override
     @PutMapping("/reply/update")
-    public SingleResult<CommentReplyVO> updateReply(String token, CommentReplyVO replyInfo) {
-        return responseService.getSingleResult(commentReplyService.updateReply(replyInfo));
+    public SingleResult<ReplyUpdateDTO> updateReply(String token, ReplyUpdateDTO replyUpdateDTO) {
+        return responseService.getSingleResult(commentReplyService.updateReply(replyUpdateDTO));
     }
 
     @Override
     @GetMapping("/reply/get")
-    public ListResult<CommentReplyVO> getReplyByCommentId(String token, int commentId) {
-        return responseService.getListResult(commentReplyService.getReplyByCommentId(commentId));
+    public ListResult<CommentReplyVO> getReplyByCommentId(String token, int replyId) {
+        return responseService.getListResult(commentReplyService.getReplyByCommentId(replyId));
     }
 
     @Override

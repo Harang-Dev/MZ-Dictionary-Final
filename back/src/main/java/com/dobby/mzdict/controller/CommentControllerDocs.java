@@ -1,5 +1,9 @@
 package com.dobby.mzdict.controller;
 
+import com.dobby.mzdict.dto.CommentAddDTO;
+import com.dobby.mzdict.dto.CommentUpdateDTO;
+import com.dobby.mzdict.dto.ReplyAddDTO;
+import com.dobby.mzdict.dto.ReplyUpdateDTO;
 import com.dobby.mzdict.vo.CommentReplyVO;
 import com.dobby.mzdict.vo.CommentVO;
 import com.dobby.mzdict.vo.WordVO;
@@ -18,13 +22,13 @@ public interface CommentControllerDocs {
     @ApiResponses(value = {
             @ApiResponse(responseCode= "200", description = "댓글 추가 성공"),
             @ApiResponse(responseCode = "400", description = "댓글 추가 실패")})
-    public Object addComment(@RequestHeader(value = "X-AUTH-TOKEN") String token, @RequestBody CommentVO commentInfo);
+    public Object addComment(@RequestHeader(value = "X-AUTH-TOKEN") String token, @RequestBody CommentAddDTO commentInfo);
 
     @Operation(summary = "댓글 수정", description = "댓글을 수정합니다.")
     @ApiResponses(value = {
             @ApiResponse(responseCode= "200", description = "댓글 수정 성공"),
             @ApiResponse(responseCode = "400", description = "댓글 수정 실패")})
-    public Object updateComment(@RequestHeader(value = "X-AUTH-TOKEN") String token, @RequestBody CommentVO commentInfo);
+    public Object updateComment(@RequestHeader(value = "X-AUTH-TOKEN") String token, @RequestBody CommentUpdateDTO commentInfo);
 
     @Operation(summary = "댓글 조회", description = "단어별 댓글을 조회합니다.")
     @ApiResponses(value = {
@@ -48,19 +52,19 @@ public interface CommentControllerDocs {
     @ApiResponses(value = {
             @ApiResponse(responseCode= "200", description = "답글 추가 성공"),
             @ApiResponse(responseCode = "400", description = "답글 추가 실패")})
-    public Object addReply(@RequestHeader(value = "X-AUTH-TOKEN") String token, @RequestBody CommentReplyVO replyInfo);
+    public Object addReply(@RequestHeader(value = "X-AUTH-TOKEN") String token, @RequestBody ReplyAddDTO replyInfo);
 
     @Operation(summary = "답글 수정", description = "답글을 수정합니다.")
     @ApiResponses(value = {
             @ApiResponse(responseCode= "200", description = "답글 수정 성공"),
             @ApiResponse(responseCode = "400", description = "답글 수정 실패")})
-    public Object updateReply(@RequestHeader(value = "X-AUTH-TOKEN") String token, @RequestBody CommentReplyVO replyInfo);
+    public Object updateReply(@RequestHeader(value = "X-AUTH-TOKEN") String token, @RequestBody ReplyUpdateDTO replyUpdateDTO);
 
     @Operation(summary = "답글 조회", description = "댓글별 답글을 조회합니다.")
     @ApiResponses(value = {
             @ApiResponse(responseCode= "200", description = "답글 조회 성공"),
             @ApiResponse(responseCode = "400", description = "답글 조회 실패")})
-    public Object getReplyByCommentId(@RequestHeader(value = "X-AUTH-TOKEN") String token, @RequestParam int commentId);
+    public Object getReplyByCommentId(@RequestHeader(value = "X-AUTH-TOKEN") String token, @RequestParam int replyId);
 
     @Operation(summary = "답글 삭제", description = "답글을 삭제합니다.")
     @ApiResponses(value = {

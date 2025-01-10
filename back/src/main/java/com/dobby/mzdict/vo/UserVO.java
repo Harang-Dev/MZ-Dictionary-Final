@@ -1,8 +1,6 @@
 package com.dobby.mzdict.vo;
 
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import java.time.LocalDateTime;
@@ -13,6 +11,9 @@ import java.util.List;
 @Getter
 @Setter
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class UserVO {
     private int id;
     private String userId;

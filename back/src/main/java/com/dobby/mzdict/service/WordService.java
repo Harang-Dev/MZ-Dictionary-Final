@@ -1,5 +1,7 @@
 package com.dobby.mzdict.service;
 
+import com.dobby.mzdict.dto.WordAddDTO;
+import com.dobby.mzdict.dto.WordUpdateDTO;
 import com.dobby.mzdict.mapper.WordMapper;
 import com.dobby.mzdict.vo.WordVO;
 import org.springframework.stereotype.Service;
@@ -16,20 +18,30 @@ public class WordService {
         this.mapper = mapper;
     }
 
-    public List<WordVO> getWords() {
-        return mapper.getWords();
+    public List<WordVO> getWords(int userId) {
+        return mapper.getWords(userId);
     }
 
-    public WordVO getWord(int id) {
-        return mapper.getWord(id);
+    public List<WordVO> getWordsByNonMember() { return mapper.getWordsByNonMember(); }
+
+    public WordVO getWord(int id, int userId) {
+        return mapper.getWord(id, userId);
     }
+
+    public WordVO getWordByNonMember(int id) { return mapper.getWordByNonMember(id); }
 
     @Transactional
-    public boolean updateWord(WordVO wordInfo){
-        LocalDateTime currentTime = LocalDateTime.now();
-        wordInfo.setUpdateTime(currentTime);
+    public boolean updateWord(WordUpdateDTO wordUpdateDTO){
+        WordVO wordVO = WordVO.builder()
+                .id(wordUpdateDTO.getId())
+                .wordTitle(wordUpdateDTO.getWordTitle())
+                .meaning(wordUpdateDTO.getMeaning())
+                .usingExample(wordUpdateDTO.getUsingExample())
+                .createTime(LocalDateTime.now())
+                .updateTime(LocalDateTime.now())
+                .build();
 
-        int rowsAffected = mapper.updateWord(wordInfo);
+        int rowsAffected = mapper.updateWord(wordVO);
         return rowsAffected > 0;
     }
 
@@ -39,18 +51,26 @@ public class WordService {
     }
 
     @Transactional
-    public int insertWord(WordVO wordInfo) {
-        LocalDateTime currentTime = LocalDateTime.now();
+    public int insertWord(WordAddDTO wordAddDTO, int userId) {
+        WordVO wordVO = WordVO.builder()
+                .wordTitle(wordAddDTO.getWordTitle())
+                .meaning(wordAddDTO.getMeaning())
+                .usingExample(wordAddDTO.getUsingExample())
+                .userId(userId)
+                .acceptStatus(0)
+                .createTime(LocalDateTime.now())
+                .updateTime(LocalDateTime.now())
+                .build();
 
-        wordInfo.setCreateTime(currentTime);
-        wordInfo.setUpdateTime(currentTime);
-        wordInfo.setAcceptStatus(0);
-
-        return mapper.insertWord(wordInfo);
+        return mapper.insertWord(wordVO);
     }
 
-    public List<WordVO> findWord(String keyWord) {
-        return mapper.findWord(keyWord);
+    public List<WordVO> findWord(String keyWord, int userId) {
+        return mapper.findWord(keyWord, userId);
+    }
+
+    public List<WordVO> findWordByNonMember(String keyWord) {
+        return mapper.findWordByNonMember(keyWord);
     }
 
     public List<WordVO> getNotAcceptWord() {

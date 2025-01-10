@@ -1,6 +1,7 @@
 package com.dobby.mzdict.controller;
 
 import com.dobby.mzdict.config.security.JwtTokenProvider;
+import com.dobby.mzdict.dto.UserRegisterDTO;
 import com.dobby.mzdict.model.CommonResult;
 import com.dobby.mzdict.model.SingleResult;
 import com.dobby.mzdict.service.UserService;
@@ -37,7 +38,7 @@ public class UserController implements UserControllerDocs{
 
     @Override
     @PostMapping("/signup")
-    public CommonResult userRegister(UserVO userInfo) {
+    public CommonResult userRegister(UserRegisterDTO userInfo) {
         UserVO vo = service.register(userInfo);
         return responseService.getSuccessResult();
     }

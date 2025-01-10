@@ -1,8 +1,7 @@
 package com.dobby.mzdict.vo;
 
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
+import com.fasterxml.jackson.core.ErrorReportConfiguration;
+import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDateTime;
@@ -10,6 +9,9 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class WordVO {
     private int id;
     private String wordTitle;
@@ -17,10 +19,14 @@ public class WordVO {
     private String usingExample;
     private int acceptStatus;
 
-    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
     private LocalDateTime createTime;
-    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
     private LocalDateTime updateTime;
 
     private int userId;
+
+    private boolean scrapped;
+    private boolean liked;
+
 }

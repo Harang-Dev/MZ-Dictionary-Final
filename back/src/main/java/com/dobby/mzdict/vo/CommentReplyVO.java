@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class CommentReplyVO {
     private int id;
     private int commentId;

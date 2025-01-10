@@ -9,11 +9,12 @@ import java.time.LocalDateTime;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class CommentReactionVO {
     private int userId;
 
     private int targetId;
-    private int reaction;
+    private boolean reaction;
 
     private LocalDateTime reactionTime;
 }

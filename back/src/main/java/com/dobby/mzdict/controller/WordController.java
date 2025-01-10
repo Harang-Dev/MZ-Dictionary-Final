@@ -1,14 +1,13 @@
 package com.dobby.mzdict.controller;
 
 import com.dobby.mzdict.config.security.JwtTokenProvider;
+import com.dobby.mzdict.dto.WordAddDTO;
+import com.dobby.mzdict.dto.WordUpdateDTO;
 import com.dobby.mzdict.service.UserService;
 import com.dobby.mzdict.service.WordService;
 import com.dobby.mzdict.vo.WordVO;
 import lombok.extern.log4j.Log4j2;
-import org.apache.coyote.Response;
-import org.apache.ibatis.annotations.Update;
 import org.springframework.http.ResponseEntity;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -30,8 +29,10 @@ public class WordController implements WordControllerDocs{
     }
 
     @GetMapping("/")
-    public ResponseEntity<List<WordVO>> getWords(@RequestHeader (value = "X-AUTH-TOKEN") String token) {
-        List<WordVO> wordList = service.getWords();
+    public ResponseEntity<List<WordVO>> getWords(String token) {
+        int userId = userService.getUserByUserId(jwtTokenProvider.getUserPK(token)).getId();
+        List<WordVO> wordList = service.getWords(userId);
+
         if (!wordList.isEmpty()) {
             return ResponseEntity.ok(wordList);
         } else {
@@ -39,9 +40,20 @@ public class WordController implements WordControllerDocs{
         }
     }
 
+    @GetMapping("/non-member")
+    public ResponseEntity<List<WordVO>> getWordsByNonMember() {
+        List<WordVO> wordList = service.getWordsByNonMember();
+        if (!wordList.isEmpty()) {
+            return ResponseEntity.ok(wordList);
+        } else {
+            return ResponseEntity.noContent().build();
+        }
+    };
+
     @GetMapping("/info")
-    public ResponseEntity<WordVO> getWord(@RequestHeader (value = "X-AUTH-TOKEN") String token, @RequestParam int wordId) {
-        WordVO wordInfo = service.getWord(wordId);
+    public ResponseEntity<WordVO> getWord(String token, int wordId) {
+        int userId = userService.getUserByUserId(jwtTokenProvider.getUserPK(token)).getId();
+        WordVO wordInfo = service.getWord(wordId, userId);
         if (wordInfo != null) {
             return ResponseEntity.ok(wordInfo);
         } else {
@@ -49,24 +61,32 @@ public class WordController implements WordControllerDocs{
         }
     }
 
-    @PostMapping("/add")
-    public ResponseEntity<WordVO> insertWord(@RequestHeader (value = "X-AUTH-TOKEN") String token, @RequestBody WordVO wordVO) {
-        int userId = userService.getUserByUserId(jwtTokenProvider.getUserPK(token)).getId();
-        wordVO.setUserId(userId);
+    @GetMapping("/info/non-member")
+    public ResponseEntity<WordVO> getWordByNonMember(int wordId) {
+        WordVO wordInfo = service.getWordByNonMember(wordId);
+        if (wordInfo != null) {
+            return ResponseEntity.ok(wordInfo);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
 
-        int result = service.insertWord(wordVO);
+
+    @PostMapping("/add")
+    public ResponseEntity<WordAddDTO> insertWord(String token, WordAddDTO wordAddDTO) {
+        int userId = userService.getUserByUserId(jwtTokenProvider.getUserPK(token)).getId();
+        int result = service.insertWord(wordAddDTO, userId);
 
         if(result > 0) {
-            return ResponseEntity.ok(service.getWord(wordVO.getId()));
+            return ResponseEntity.ok(wordAddDTO);
         } else {
             return ResponseEntity.status(400).build();
         }
     }
 
-
     @PutMapping("/update")
-    public ResponseEntity<Map<String, Object>> updateWord(@RequestHeader (value = "X-AUTH-TOKEN") String token, @RequestBody WordVO wordVO) {
-        boolean result = service.updateWord(wordVO);
+    public ResponseEntity<Map<String, Object>> updateWord(String token, WordUpdateDTO wordUpdateDto) {
+        boolean result = service.updateWord(wordUpdateDto);
         Map<String, Object> map = new HashMap<>();
         map.put("success", result);
 
@@ -80,7 +100,7 @@ public class WordController implements WordControllerDocs{
     }
 
     @DeleteMapping("/delete")
-    public ResponseEntity<Integer> deleteWord(@RequestHeader (value = "X-AUTH-TOKEN") String token, @RequestParam int wordId) {
+    public ResponseEntity<Integer> deleteWord(String token, int wordId) {
         int result = service.deleteWord(wordId);
         if(result > 0) {
             return ResponseEntity.status(200).body(result);
@@ -90,8 +110,21 @@ public class WordController implements WordControllerDocs{
     }
 
     @GetMapping("/find")
-    public ResponseEntity<List<WordVO>> findWord(@RequestHeader (value = "X-AUTH-TOKEN") String token, @RequestParam String keyWord) {
-        List<WordVO> result = service.findWord(keyWord);
+    public ResponseEntity<List<WordVO>> findWord(String token, String keyWord) {
+        int userId = userService.getUserByUserId(jwtTokenProvider.getUserPK(token)).getId();
+        List<WordVO> result = service.findWord(keyWord, userId);
+
+        if(!result.isEmpty()) {
+            return ResponseEntity.ok(result);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @GetMapping("/find/non-member")
+    public ResponseEntity<List<WordVO>> findWordByNonMember(String keyWord) {
+        List<WordVO> result = service.findWordByNonMember(keyWord);
+
         if(!result.isEmpty()) {
             return ResponseEntity.ok(result);
         } else {

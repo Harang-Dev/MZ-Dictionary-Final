@@ -1,6 +1,6 @@
 package com.dobby.mzdict.controller;
 
-import com.dobby.mzdict.model.CommonResult;
+import com.dobby.mzdict.dto.ReactionDTO;
 import com.dobby.mzdict.model.ListResult;
 import com.dobby.mzdict.model.SingleResult;
 import com.dobby.mzdict.service.CommentReactionService;
@@ -8,14 +8,8 @@ import com.dobby.mzdict.service.ReplyReactionService;
 import com.dobby.mzdict.service.UserService;
 import com.dobby.mzdict.service.security.ResponseService;
 import com.dobby.mzdict.vo.CommentReactionVO;
-import com.dobby.mzdict.vo.CommentReplyVO;
-import com.dobby.mzdict.vo.CommentVO;
-import lombok.AllArgsConstructor;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
-
-import javax.xml.stream.events.Comment;
 
 @RestController
 @RequestMapping("/reaction")
@@ -34,22 +28,20 @@ public class CommentReactionController implements CommentReactionControllerDocs{
 
     @Override
     @PostMapping("/comment/add")
-    public SingleResult<Boolean> addReaction(String token, CommentReactionVO reactionInfo) {
+    public SingleResult<Boolean> addReaction(String token, ReactionDTO reactionDTO) {
         String userId = SecurityContextHolder.getContext().getAuthentication().getName();
         int id = userService.getUserByUserId(userId).getId();
 
-        reactionInfo.setUserId(id);
-        return responseService.getSingleResult(commentReactionService.addReaction(reactionInfo));
+        return responseService.getSingleResult(commentReactionService.addReaction(reactionDTO, id));
     }
 
     @Override
     @PutMapping("/comment/update")
-    public SingleResult<Boolean> updateReaction(String token, CommentReactionVO reactionInfo) {
+    public SingleResult<Boolean> updateReaction(String token, ReactionDTO reactionDTO) {
         String userId = SecurityContextHolder.getContext().getAuthentication().getName();
         int id = userService.getUserByUserId(userId).getId();
 
-        reactionInfo.setUserId(id);
-        return responseService.getSingleResult(commentReactionService.updateReaction(reactionInfo));
+        return responseService.getSingleResult(commentReactionService.updateReaction(reactionDTO, id));
     }
 
     @Override
@@ -84,22 +76,20 @@ public class CommentReactionController implements CommentReactionControllerDocs{
 
     @Override
     @PostMapping("/reply/add")
-    public SingleResult<Boolean> addReplyReaction(String token, CommentReactionVO replyInfo) {
+    public SingleResult<Boolean> addReplyReaction(String token, ReactionDTO reactionDTO) {
         String userId = SecurityContextHolder.getContext().getAuthentication().getName();
         int id = userService.getUserByUserId(userId).getId();
 
-        replyInfo.setUserId(id);
-        return responseService.getSingleResult(replyReactionService.addReaction(replyInfo));
+        return responseService.getSingleResult(replyReactionService.addReaction(reactionDTO, id));
     }
 
     @Override
     @PutMapping("/reply/update")
-    public SingleResult<Boolean> updateReplyReaction(String token, CommentReactionVO replyInfo) {
+    public SingleResult<Boolean> updateReplyReaction(String token, ReactionDTO reactionDTO) {
         String userId = SecurityContextHolder.getContext().getAuthentication().getName();
         int id = userService.getUserByUserId(userId).getId();
 
-        replyInfo.setUserId(id);
-        return responseService.getSingleResult(replyReactionService.updateReaction(replyInfo));
+        return responseService.getSingleResult(replyReactionService.updateReaction(reactionDTO, id));
     }
 
     @Override

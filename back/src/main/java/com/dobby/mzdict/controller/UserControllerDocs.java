@@ -1,4 +1,5 @@
 package com.dobby.mzdict.controller;
+import com.dobby.mzdict.dto.UserRegisterDTO;
 import com.dobby.mzdict.model.CommonResult;
 import com.dobby.mzdict.model.SingleResult;
 import com.dobby.mzdict.vo.LoginVO;
@@ -20,7 +21,7 @@ public interface UserControllerDocs {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "회원가입 성공"),
             @ApiResponse(responseCode = "409", description = "회원가입 실패 (중복)")})
-    public CommonResult userRegister(@RequestBody UserVO userInfo);
+    public CommonResult userRegister(@RequestBody UserRegisterDTO userInfo);
 
     @Operation(summary = "로그인", description = "로그인 기능을 테스트 합니다.")
     @ApiResponses(value = {

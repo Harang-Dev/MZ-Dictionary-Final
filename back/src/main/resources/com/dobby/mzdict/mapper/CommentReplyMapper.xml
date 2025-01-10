@@ -7,7 +7,7 @@
         <result property="userId" column="user_id" />
         <result property="replyText" column="reply_text" />
         <result property="createTime" column="created_at" />
-        <result property="updateTime" column="update_at" />
+        <result property="updateTime" column="updated_at" />
     </resultMap>
 
     <insert id="addReply" >

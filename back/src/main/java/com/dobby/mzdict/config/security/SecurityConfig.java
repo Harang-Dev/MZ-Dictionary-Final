@@ -64,8 +64,8 @@ public class SecurityConfig {
 
         http
                 .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/swagger-ui/**", "/swagger-ui.html").hasRole("SWAGGER"));
-        http.httpBasic(Customizer.withDefaults());
+                    .requestMatchers("/api-docs/**","/swagger-resources/**", "/swagger-ui/**", "/swagger/**", "/user/signin", "/user/signup", "/word/non-member", "/word/info/non-member", "/word/find/non-member").permitAll()
+                    .anyRequest().hasRole("USER"));
 
         http.addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class);
 

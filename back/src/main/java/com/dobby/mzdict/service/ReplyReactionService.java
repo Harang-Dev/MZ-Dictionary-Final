@@ -1,5 +1,6 @@
 package com.dobby.mzdict.service;
 
+import com.dobby.mzdict.dto.ReactionDTO;
 import com.dobby.mzdict.mapper.ReplyReactionMapper;
 import com.dobby.mzdict.vo.CommentReactionVO;
 import org.springframework.stereotype.Service;
@@ -26,15 +27,21 @@ public class ReplyReactionService {
         return ReplyReactionMapper.getReactionById(replyId,userId);
     }
 
-    public boolean addReaction(CommentReactionVO commentReactionVO){
-        LocalDateTime now = LocalDateTime.now();
-        commentReactionVO.setReactionTime(now);
+    public boolean addReaction(ReactionDTO reactionDTO, int userId){
+        CommentReactionVO commentReactionVO = CommentReactionVO.builder()
+                .userId(userId)
+                .targetId(reactionDTO.getTargetId())
+                .reaction(reactionDTO.isReaction())
+                .reactionTime(LocalDateTime.now())
+                .build();
 
         return ReplyReactionMapper.addReaction(commentReactionVO);
     }
-    public boolean updateReaction(CommentReactionVO commentReactionVO) {
-        LocalDateTime now = LocalDateTime.now();
-        commentReactionVO.setReactionTime(now);
+    public boolean updateReaction(ReactionDTO reactionDTO, int userId) {
+        CommentReactionVO commentReactionVO = ReplyReactionMapper.getReactionById(reactionDTO.getTargetId(),userId);
+
+        commentReactionVO.setReaction(reactionDTO.isReaction());
+        commentReactionVO.setReactionTime(LocalDateTime.now());
 
         return ReplyReactionMapper.updateReaction(commentReactionVO);
     }
