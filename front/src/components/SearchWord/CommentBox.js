@@ -1,5 +1,10 @@
 import React, { useState } from "react";
-import { Card, Flex, Typography, Input, Button, Select } from "antd";
+import { Card, Input, Button, Typography } from "antd";
+import { LikeOutlined } from "@ant-design/icons";
+import { useLocation } from 'react-router-dom';
+import styled from "styled-components";
+import { useMutation } from '@tanstack/react-query';
+import { addComment } from "../../API/api";
 
 const cardStyle = {
   maxWidth: 1034,
@@ -18,94 +23,95 @@ const inputStyle = {
   padding: "8px",
 };
 
+const ButtonWrapper = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 16px;
+`;
+
+const LikeButtonWrapper = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  margin-top: 8px;
+`;
+
 const CommentBox = () => {
-  const [comments, setComments] = useState([]);
+  const location = useLocation();
+  const { comments, id } = location.state;
+
   const [newComment, setNewComment] = useState("");
-  const [sortOption, setSortOption] = useState("latest"); // 정렬 옵션
+
+  const { mutate: addNewComment, isLoading } = useMutation({
+    mutationFn: async (commentText) => {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        throw new Error("No authentication token found");
+      }
+
+      const wordId = id;
+
+      console.log("Token:", token);
+      console.log("Comment Text:", commentText);
+      console.log("Word ID:", wordId);
+
+      return addComment(token, commentText, wordId);
+    },
+    onSuccess: (data) => {
+      setNewComment("");
+    },
+    onError: (error) => {
+      console.error("Error adding comment:", error);
+      console.log(token, commentText, wordId);
+    }
+  });
 
   const handleAddComment = () => {
     if (newComment.trim()) {
-      const newCommentData = {
-        text: newComment,
-        likeCount: 0, // 좋아요 초기값
-        createdAt: new Date(), // 생성 시간
-      };
-      setComments([newCommentData, ...comments]);
-      setNewComment("");
+      addNewComment(newComment);
     }
   };
-
-  const handleLike = (index) => {
-    const updatedComments = [...comments];
-    updatedComments[index].likeCount += 1; // 좋아요 수 증가
-    setComments(updatedComments);
-  };
-
-  const handleSortChange = (value) => {
-    setSortOption(value);
-  };
-
-  const sortedComments = comments.sort((a, b) => {
-    if (sortOption === "latest") {
-      return b.createdAt - a.createdAt; // 최신순 정렬
-    } else if (sortOption === "likes") {
-      return b.likeCount - a.likeCount; // 좋아요 순 정렬
-    }
-    return 0;
-  });
 
   return (
     <Card style={cardStyle}>
-      {/* 댓글 입력 및 정렬 옵션 */}
       <Typography.Title level={4} style={{ color: "#fff", marginBottom: "16px" }}>
         댓글 입력
       </Typography.Title>
-      <Flex justify="space-between" align="center" style={{ marginBottom: "16px" }}>
-        <Input
-          style={inputStyle}
-          value={newComment}
-          placeholder="주제와 무관한 댓글은 삭제될 수 있습니다."
-          onChange={(e) => setNewComment(e.target.value)}
-        />
-        <Button type="primary" style={{ marginLeft: "8px" }} onClick={handleAddComment}>
+      <Input
+        style={inputStyle}
+        value={newComment}
+        onChange={(e) => setNewComment(e.target.value)}
+        placeholder="댓글을 입력하세요"
+      />
+      <ButtonWrapper>
+        <Button
+          type="primary"
+          onClick={handleAddComment}
+          loading={isLoading}
+        >
           등록
         </Button>
-      </Flex>
-      <Flex justify="end" style={{ marginBottom: "16px" }}>
-        <Select
-          value={sortOption}
-          onChange={handleSortChange}
-          style={{ width: 120 }}
-          options={[
-            { value: "latest", label: "최신순" },
-            { value: "likes", label: "좋아요 순" },
-          ]}
-        />
-      </Flex>
-      <div>
-        {sortedComments.map((comment, index) => (
+      </ButtonWrapper>
+
+      <div style={{ marginTop: "16px" }}>
+        {comments.map((comment, index) => (
           <Card
             key={index}
-            style={{
-              backgroundColor: "#222",
-              border: "none",
-              marginBottom: "8px",
-              padding: "8px",
-            }}
+            style={{ backgroundColor: "#222", border: "none", marginBottom: "8px", padding: "8px" }}
           >
-            <Typography.Text style={{ color: "#fff" }}>{comment.text}</Typography.Text>
-            <Flex justify="space-between" align="center" style={{ marginTop: "8px" }}>
-              <Typography.Text style={{ color: "#aaa" }}>
-                좋아요: {comment.likeCount}
-              </Typography.Text>
+            <Typography.Text style={{ color: "#fff" }}>
+              {comment.commentText}
+            </Typography.Text>
+            <LikeButtonWrapper>
               <Button
-                type="link"
-                style={{ color: "#4096ff", padding: 0 }}
-                onClick={() => handleLike(index)}
-              >
-                좋아요
-              </Button>
-            </Flex>
+                type="text"
+                icon={<LikeOutlined style={{ color: "#4096ff" }} />}
+                style={{ padding: 0 }}
+              />
+              <Typography.Text style={{ color: "#aaa", marginLeft: "8px" }}>
+                {comment.commentLikeCount}
+              </Typography.Text>
+            </LikeButtonWrapper>
           </Card>
         ))}
       </div>

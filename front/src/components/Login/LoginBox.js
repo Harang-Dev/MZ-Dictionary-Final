@@ -115,10 +115,10 @@ function LoginBox() {
   const navigate = useNavigate();
 
 
-  const { mutate, isLoading } = useMutation({
+  const { mutate } = useMutation({
     mutationFn: signIn,
     onSuccess: (data) => {
-      const { msg, data:token } = data;
+      const { data:token } = data;
       localStorage.setItem("token", token);
       message.success('환영합니다.');
       navigate("/");
@@ -133,6 +133,7 @@ function LoginBox() {
 
   const handleSubmit = (values) => {
     mutate(values);
+    console.log(values);
   };
 
   return (

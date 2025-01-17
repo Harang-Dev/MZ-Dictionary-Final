@@ -1,6 +1,9 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import styled from "styled-components";
+import { useQuery } from "@tanstack/react-query";
+import { userDetail } from "../API/api";
+import { message } from "antd";
 
 const HeaderWrapper = styled.header`
   display: flex;
@@ -12,10 +15,14 @@ const HeaderWrapper = styled.header`
   color: #fff;
 `;
 
-const Logo = styled.div`
-  font-size: 1.5rem;
-  font-weight: bold;
-  color: #fff;
+const LogoBox = styled.div`
+  background-image: url('/media/logo.png');
+  background-size: 50px;
+  background-repeat: no-repeat;
+  background-position: center;
+  width: 70px;
+  height: 70px;
+
 `;
 
 const NavList = styled.ul`
@@ -49,18 +56,54 @@ const NavItem = styled.li`
   }
 `;
 
-
 const Header = () => {
+  const token = localStorage.getItem("token");
+  const navigate = useNavigate();
+
+  const userQuery = useQuery({
+    queryKey: ["userDetail", token], // 쿼리 키
+    queryFn: () => userDetail(token), // 데이터 패칭 함수
+    enabled: !!token, // token이 있을 때만 실행
+  });
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    message.success("로그아웃 되었습니다.");
+    navigate("/");
+  };
+
+  const handleMyWord = () => {
+    if(!token) {
+      message.error("로그인이 필요합니다 !");
+      navigate("/login");
+    }
+    else if(token) {
+      navigate("myword");
+    }
+  }
+
   return (
     <HeaderWrapper>
       <Link to="/">
-        <Logo>MyLogo</Logo>
+        <LogoBox />
       </Link>
       <NavList>
-        <NavItem>WordBook</NavItem>
-        <Link to="/login">
-          <NavItem>Login</NavItem>
+        <Link to="/wordbook">
+          <NavItem>WordBook</NavItem>
         </Link>
+        {!token ? (
+          <Link to="/login">
+            <NavItem>Login</NavItem>
+          </Link>
+        ) : (
+          <Link to="/">
+            <NavItem onClick={handleLogout}>Logout</NavItem>
+          </Link>
+        )}
+        {token && userQuery.data && (
+          <NavItem>{userQuery.data.userId}</NavItem>
+        )}
+            <NavItem onClick={handleMyWord}>My Word</NavItem>
       </NavList>
     </HeaderWrapper>
   );

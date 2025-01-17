@@ -1,6 +1,5 @@
 import React from "react";
 import styled from "styled-components";
-import SearchButton from "./SearchButton";
 
 const MainWrapper = styled.div`
   display: flex;
@@ -12,53 +11,40 @@ const MainWrapper = styled.div`
   color: #fff;
   background-color: #000;
   font-family: 'Amethysta', serif;
-  position: relative;
-  overflow: hidden;
-`;
-
-const BackgroundImage = styled.img`
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  opacity: 0.2; /* 이미지에만 투명도 적용 */
-  pointer-events: none; /* 클릭 방지 */
+  margin-bottom: 10%;
 `;
 
 const SubTitle = styled.h2`
   font-size: 1.5rem;
   font-weight: normal;
-  z-index: 1; /* 텍스트가 이미지 위로 오도록 설정 */
 `;
 
 const MainTitle = styled.h1`
-  font-size: 4.5rem;
+  font-size: 8.5rem;
   font-weight: bold;
   display: flex;
   flex-direction: column;
   align-items: center;
   margin: 0;
-  z-index: 1;
+  margin-bottom: 100px;
 `;
 
 const Line = styled.span`
   display: block;
+  margin-top: 10px;
 `;
 
-function MainContent() {
+
+function MyWordTitle() {
   return (
     <MainWrapper>
-      <BackgroundImage src="/media/1.png" alt="Background" />
       <SubTitle>MZ세대의 언어로 가득 찬 힙한 단어사전</SubTitle>
       <MainTitle>
-        <Line>MZ Generation</Line>
-        <Line>Word Dictionary</Line>
+        <Line>My Word</Line>
+        <Line style={{ fontSize: '1rem'}}>위 내용에 대한 저작권 및 법적 책임은 자료 제공사 또는 글쓴이에게 있으며 Team의 입장과 다를 수 있습니다.</Line>
       </MainTitle>
-      <SearchButton />
     </MainWrapper>
   );
 }
 
-export default MainContent;
+export default MyWordTitle;

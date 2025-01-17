@@ -2,13 +2,13 @@ import React from "react";
 import styled from "styled-components";
 
 const ImageBox = styled.div`
-    width: 726px;
-    height: 726px;
-    background-image: url('/media/sample.png');
+    width: 836px;
+    height: 780px;
+    background-image: url('/media/2.png');
     background-repeat: no-repeat;
     background-size: contain;
-    margin-right: 100px;
     background-position: center;
+    opacity: 0.4;
 `;
 
 function LoginImage () {

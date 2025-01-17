@@ -84,7 +84,7 @@ const StyledButton = styled(Button)`
 function RegisterBox() {
   const navigate = useNavigate();
 
-  const { mutate, isLoading } = useMutation({
+  const { mutate } = useMutation({
     mutationFn: signUp,
     onSuccess: () => {
       message.success("회원가입 성공!");
@@ -123,7 +123,7 @@ function RegisterBox() {
         </Form.Item>
 
         <Form.Item
-          name="passWord"
+          name="password"
           rules={[{ required: true, message: "비밀번호를 입력하세요." }]}
         >
           <StyledPasswordInput placeholder="Password" size="large" />
@@ -158,7 +158,7 @@ function RegisterBox() {
         </Form.Item>
 
         <Form.Item
-          name="userNickName"
+          name="nickname"
           rules={[{ required: true, message: "닉네임을 입력하세요." }]}
         >
           <StyledInput placeholder="Nickname" size="large" />

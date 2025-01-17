@@ -1,24 +1,23 @@
 import React from "react";
 import { Layout } from "antd";
 import Header from "../components/Header";
-import DetailBox from "../components/SearchWord/DetailBox";
-// import CommentBox from "../components/SearchWord/CommentBox";
-import RandomCard from "../components/SearchWord/RandomCard";
+import WordBookTitle from "../components/WordBook/WordBookTitle";
+import WordCardBox from "../components/WordBook/WordCardBox";
 
 const { Footer, Content } = Layout;
 
 const layoutStyle = {
   minHeight: "100vh",
+  backgroundColor: '#000'
 };
 
 const contentStyle = {
-  flex: 1,
-  display: 'flex',
-  justifyContent: 'center',
-  alignItems: 'center',
-  backgroundColor: '#000',
-  flexDirection: "column",
-};
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    flexDirection: 'column',
+    padding: '0 100px'
+}
 
 const footerStyle = {
   textAlign: "center",
@@ -27,16 +26,15 @@ const footerStyle = {
   borderTop: "0.5px solid #d9d9d9"
 };
 
-const DetailPage = () => (
+const WordBook = () => (
   <Layout style={layoutStyle}>
     <Header />
     <Content style={contentStyle}>
-      <DetailBox />
-        <RandomCard />
-      {/* <CommentBox /> */}
+    <WordBookTitle />
+    <WordCardBox />
     </Content>
     <Footer style={footerStyle}>Team H&M</Footer>
   </Layout>
 );
 
-export default DetailPage;
+export default WordBook;

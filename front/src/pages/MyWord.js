@@ -1,39 +1,39 @@
 import React from "react";
 import { Layout } from "antd";
 import Header from "../components/Header";
-import RegisterImage from "../components/Auth/RegisterImage";
-import RegisterBox from "../components/Auth/RegisterBox";
+import MyWordTitle from "../components/MyWord/MyWordTitle";
+import MyWordCard from "../components/MyWord/MyWordCard";
 
 const { Footer, Content } = Layout;
 
 const layoutStyle = {
   minHeight: "100vh",
+  backgroundColor: '#000'
 };
 
 const contentStyle = {
-    flex: 1,
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#000',
-};
+    flexDirection: 'column',
+    padding: '0 100px'
+}
 
 const footerStyle = {
   textAlign: "center",
   color: "#fff",
-  backgroundColor: "#000",
-  borderTop: "0.5px solid #d9d9d9"
+  backgroundColor: "#4096ff",
 };
 
-const RegisterPage = () => (
+const MyWord = () => (
   <Layout style={layoutStyle}>
     <Header />
     <Content style={contentStyle}>
-      <RegisterImage />
-      <RegisterBox />
+        <MyWordTitle />
+        <MyWordCard />
     </Content>
-    <Footer style={footerStyle}>Team H&M</Footer>
+    <Footer style={footerStyle}>Footer</Footer>
   </Layout>
 );
 
-export default RegisterPage;
+export default MyWord;

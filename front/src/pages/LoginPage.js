@@ -21,7 +21,8 @@ const contentStyle = {
 const footerStyle = {
   textAlign: "center",
   color: "#fff",
-  backgroundColor: "#4096ff",
+  backgroundColor: "#000",
+  borderTop: "0.5px solid #d9d9d9"
 };
 
 const LoginPage = () => (
@@ -31,7 +32,7 @@ const LoginPage = () => (
         <LoginImage />
         <LoginBox />
     </Content>
-    <Footer style={footerStyle}>Footer</Footer>
+    <Footer style={footerStyle}>Team H&M</Footer>
   </Layout>
 );
 
